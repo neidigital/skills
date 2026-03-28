@@ -1,26 +1,36 @@
 ---
 name: lexguard
 description: >
-  Complete reference for operating the LexGuard marketing platform via MCP tools.
-  Covers every tool category: leads & CRM, messaging, campaigns, posts & media,
-  sprints & scheduling, ideas board, team notes, data stores & jobs, AI pipelines,
-  project groups & info, and workflow scheduling. Use this skill whenever working
-  with LexGuard data — managing leads, creating campaigns, planning sprints,
-  building pipelines, setting up data stores, reviewing outbox messages, generating
-  team briefings, or any task that touches the LexGuard MCP server.
+  Complete reference for operating the LexGuard platform via its five MCP servers.
+  Covers every tool category across Marketing (leads, campaigns, posts, sprints,
+  ideas, pipelines, calendars, boxes, team notes), Business (panorama, CRM, data
+  stores & jobs, file import), Finance (transactions, invoices, reports, accounts,
+  scheduled payments), Office (mail, visitors, calls, reservations, locations),
+  and Compliance (tracking rules, file search, collections, obligations).
+  Use this skill whenever working with LexGuard data.
 metadata:
   author: lexguard
-  version: "2.0.0"
-  requires-mcp: lexguard-leads
+  version: "3.0.0"
+  requires-mcp: lexguard-marketing, lexguard-business, lexguard-finance, lexguard-office, lexguard-compliance
 ---
 
 # LexGuard Platform Guide
 
-This skill is your complete reference for operating LexGuard through its MCP tools. LexGuard is an AI-native marketing automation platform where small business teams manage leads, campaigns, content, sprints, and AI pipelines — all in Spanish.
+This skill is your complete reference for operating LexGuard through its MCP tools. LexGuard is an AI-native business operating system where small business teams manage leads, campaigns, content, sprints, finance, compliance, and virtual office operations — all in Spanish.
 
-Every tool below belongs to the LexGuard Leads MCP server. When you see a tool name in **bold**, that's the exact MCP tool to call.
+LexGuard exposes **five MCP servers**, each grouping related tools:
+
+| MCP Server | Endpoint | Domain |
+|------------|----------|--------|
+| **lexguard-marketing** | `/api/mcp/marketing` | Leads, campaigns, posts, sprints, ideas, pipelines, calendars, boxes, team notes |
+| **lexguard-business** | `/api/mcp/business` | Business panorama, CRM, data stores & jobs, file import |
+| **lexguard-finance** | `/api/mcp/finance` | Transactions, invoices, accounts, categories, reports, forecasting |
+| **lexguard-office** | `/api/mcp/office` | Mail, visitors, calls, reservations, locations |
+| **lexguard-compliance** | `/api/mcp/compliance` | Tracking rules, file search, virtual collections, obligations |
 
 ---
+
+# Marketing Server (`lexguard-marketing`)
 
 ## 1. Leads & CRM
 
@@ -35,6 +45,9 @@ Leads are the core entity — every person who interacts with the business is a 
 | **find_lead_by_channel** | Look up a lead by their channel identifier (phone number, email, etc.). |
 | **merge_leads** | Merge duplicate leads into one record. |
 | **link_channel** | Connect an additional channel (WhatsApp, Telegram, email) to an existing lead. |
+| **add_note** | Add a note to a lead's record. |
+| **create_task** | Create a standalone task for a lead. |
+| **complete_task** | Mark a task as complete. |
 
 ### Qualifying a lead
 
@@ -167,7 +180,6 @@ Sprints organize work into time-boxed periods. Tasks within sprints can link to 
 | **delete_sprint_task** | Remove a task. |
 | **schedule_sprint_task** | Add a scheduled date block with label, startDate (ISO), and durationHours or endDate. |
 | **remove_sprint_task_schedule** | Remove a schedule from a task. |
-| **complete_task** | Mark a task as complete. |
 
 ### Planning a sprint
 
@@ -214,7 +226,97 @@ A workspace-wide strategic backlog for marketing ideas. Ideas flow through: back
 
 ---
 
-## 7. Team Notes
+## 7. AI Pipelines
+
+Pipelines are visual node graphs that automate marketing workflows — from lead auto-replies to content generation to data enrichment. They're built with nodes and edges, then executed by Convex.
+
+| Tool | Purpose |
+|------|---------|
+| **get_node_types** | List all available node types with categories, descriptions, and configurable fields. |
+| **create_project** | Create a new pipeline project with name and description. |
+| **get_project** | View pipeline with all nodes and edges. |
+| **update_project** | Change status ("active", "inactive"), name, or description. |
+| **add_node** | Add a node to the pipeline (input, processing, or output). |
+| **update_node** | Modify node configuration. |
+| **remove_node** | Delete a node. |
+| **add_edge** | Connect two nodes (source → target). |
+| **remove_edge** | Disconnect nodes. |
+| **add_note** | Add a comment/note to the pipeline canvas. |
+| **run_pipeline** | Execute the pipeline with a test lead or trigger. |
+| **list_pipelines** | List all pipeline projects. |
+
+### Building a pipeline
+
+1. **get_node_types** → understand available nodes (input, LLM, conditional, data lookup, output)
+2. Clarify purpose: lead processing, content generation, or data enrichment
+3. **create_project** → descriptive name
+4. **add_node** → start with input node (e.g., inputUserMessages), add processing nodes, end with output nodes (sendMessage, updateLead, etc.)
+5. **add_edge** → connect source to target
+6. **get_project** → verify all nodes are connected
+7. **update_project** → set status to "active"
+8. **run_pipeline** → test with a real lead
+
+---
+
+## 8. Calendars & Scheduling
+
+Calendars manage time-based scheduling with capacity control, business hours, and slot management.
+
+| Tool | Purpose |
+|------|---------|
+| **list_calendars** | List all scheduling calendars with name, capacity, slot duration, business hours, and active status. |
+| **create_calendar** | Create a new scheduling calendar with business hours and capacity settings. |
+| **get_calendar_events** | List events for a calendar within a date range. |
+| **create_calendar_event** | Create a calendar event. Validates against parallel capacity for the time slot. |
+| **update_calendar_event** | Modify an existing calendar event. |
+| **cancel_calendar_event** | Cancel a calendar event. |
+
+---
+
+## 9. Boxes (Cajas)
+
+Boxes are media collections used to organize marketing assets.
+
+| Tool | Purpose |
+|------|---------|
+| **list_boxes** | List all media boxes/collections. |
+| **get_box** | Get box details. |
+| **create_box** | Create a new box. |
+| **delete_box** | Remove a box. |
+
+---
+
+## 10. Marketing Files
+
+Hierarchical file management for marketing assets.
+
+| Tool | Purpose |
+|------|---------|
+| **list_marketing_files** | List files in a folder. |
+| **create_marketing_folder** | Create a new folder. |
+| **rename_marketing_file** | Rename a file or folder. |
+| **delete_marketing_file** | Remove a file. |
+
+---
+
+## 11. Project Groups & Info
+
+Project groups are organizational containers that link campaigns, leads, posts, and sprints together. Project info stores key-value brand context (voice, tone, instructions) that feeds into AI workflows.
+
+| Tool | Purpose |
+|------|---------|
+| **list_project_groups** | List all project groups with their IDs. |
+| **get_project_group** | Full group detail. |
+| **create_project_group** | Create a new group. |
+| **update_project_group** | Modify group settings. |
+| **delete_project_group** | Remove a group. |
+| **get_project_info** | Get brand context (voice, tone, pain points, USP) stored as key-value pairs. |
+| **upsert_project_info** | Create or update project info entries. |
+| **delete_project_info** | Remove project info entries. |
+
+---
+
+## 12. Team Notes
 
 Shared team board for async communication and context sharing.
 
@@ -240,7 +342,56 @@ Gather data from across the platform and compose a comprehensive update:
 
 ---
 
-## 8. Data Stores & Jobs
+## 13. Workflow Scheduling
+
+Schedule automated workflows for timed follow-ups, recurring data jobs, and campaign automation.
+
+| Tool | Purpose |
+|------|---------|
+| **list_schedules** | List all scheduled workflows with their statuses. |
+| **schedule_workflow** | Create a new scheduled workflow execution. |
+| **cancel_schedule** | Cancel a pending schedule. |
+
+---
+
+# Business Server (`lexguard-business`)
+
+## 14. Business Intelligence
+
+High-level tools that aggregate data from multiple domains for a panoramic view of the business.
+
+| Tool | Purpose |
+|------|---------|
+| **get_business_panorama** | Get a high-level panorama: compliance health, lead pipeline, pending tasks, unread mail, and recent activity. Each section is fetched independently so partial failures don't break the response. |
+| **search_across_domains** | Search across multiple business domains (leads, companies, files) with a single query string. Returns matching results from each requested domain. |
+
+### Getting a business snapshot
+
+1. **get_business_panorama** → comprehensive overview
+2. Drill into specific areas based on findings:
+   - Low compliance health → switch to compliance tools
+   - Pending leads → switch to lead tools
+   - Unread mail → switch to office tools
+3. Present a prioritized action list
+
+---
+
+## 15. CRM (Directorio)
+
+Companies and contacts management for the business directory.
+
+| Tool | Purpose |
+|------|---------|
+| **list_companies** | List companies. Supports optional search by business name or trade name. |
+| **get_company** | Get a company by ID, including related addresses and personas. |
+| **create_company** | Create a new company in the CRM. |
+| **update_company** | Update an existing company by ID. |
+| **list_personas** | List personas/contacts. Optionally filter by company. |
+| **create_persona** | Create a new persona/contact in the CRM. |
+
+---
+
+## 16. Data Stores & Jobs
 
 Data stores hold structured data (like contact lists, product catalogs, or scraped results) that can feed into AI pipelines. Data jobs are JavaScript scripts that populate stores automatically.
 
@@ -271,85 +422,203 @@ Data stores hold structured data (like contact lists, product catalogs, or scrap
 
 ---
 
-## 9. AI Pipelines
+## 17. File Import
 
-Pipelines are visual node graphs that automate marketing workflows — from lead auto-replies to content generation to data enrichment. They're built with nodes and edges, then executed by Convex.
-
-| Tool | Purpose |
-|------|---------|
-| **get_node_types** | List all available node types with categories, descriptions, and configurable fields. |
-| **create_project** | Create a new pipeline project with name and description. |
-| **get_project** | View pipeline with all nodes and edges. |
-| **update_project** | Change status ("active", "inactive"), name, or description. |
-| **delete_project_info** | Remove project metadata. |
-| **add_node** | Add a node to the pipeline (input, processing, or output). |
-| **update_node** | Modify node configuration. |
-| **remove_node** | Delete a node. |
-| **add_edge** | Connect two nodes (source → target). |
-| **remove_edge** | Disconnect nodes. |
-| **add_note** | Add a comment/note to the pipeline canvas. |
-| **run_pipeline** | Execute the pipeline with a test lead or trigger. |
-| **list_pipelines** | List all pipeline projects. |
-
-### Building a pipeline
-
-1. **get_node_types** → understand available nodes (input, LLM, conditional, data lookup, output)
-2. Clarify purpose: lead processing, content generation, or data enrichment
-3. **create_project** → descriptive name
-4. **add_node** → start with input node (e.g., inputUserMessages), add processing nodes, end with output nodes (sendMessage, updateLead, etc.)
-5. **add_edge** → connect source to target
-6. **get_project** → verify all nodes are connected
-7. **update_project** → set status to "active"
-8. **run_pipeline** → test with a real lead
-
----
-
-## 10. Project Groups & Info
-
-Project groups are organizational containers that link campaigns, leads, posts, and sprints together. Project info stores key-value brand context (voice, tone, instructions) that feeds into AI workflows.
+Import files from external sources into the LexGuard file library.
 
 | Tool | Purpose |
 |------|---------|
-| **list_project_groups** | List all project groups with their IDs. |
-| **get_project_group** | Full group detail. |
-| **create_project_group** | Create a new group. |
-| **update_project_group** | Modify group settings. |
-| **delete_project_group** | Remove a group. |
-| **get_project_info** | Get brand context (voice, tone, pain points, USP) stored as key-value pairs. |
-| **upsert_project_info** | Create or update project info entries. |
+| **importFile** | Import a file into the library. Supports three source types: `url` (fetch from URL), `base64` (encoded binary data with mimeType), or `text` (plain text/CSV/Markdown). Returns the stored file record. |
 
 ---
 
-## 11. Marketing Files & Boxes
+# Finance Server (`lexguard-finance`)
 
-Hierarchical file management for marketing assets.
+## 18. Transactions
+
+Core financial transaction management backed by Convex.
 
 | Tool | Purpose |
 |------|---------|
-| **list_marketing_files** | List files in a folder. |
-| **create_marketing_folder** | Create a new folder. |
-| **rename_marketing_file** | Rename a file or folder. |
-| **delete_marketing_file** | Remove a file. |
-| **list_boxes** | List media boxes (collections). |
-| **get_box** | Get box details. |
-| **create_box** | Create a new box. |
-| **delete_box** | Remove a box. |
+| **search_transactions** | Search and list transactions with filters. Returns up to 100 results ordered by date descending. |
+| **get_transaction** | Get a single transaction by ID with full details including linked transactions. |
+| **create_transaction** | Create a new financial transaction (income or expense). |
+| **update_transaction** | Update an existing transaction's fields. |
+| **delete_transaction** | Delete a transaction. Linked transactions are unlinked automatically. |
+| **link_transactions** | Link two transactions for reconciliation (bidirectional). Matches income and expense records for the same payment. |
+| **get_transaction_summary** | Financial summary: balance by currency, totals by aggregation category, transaction count. Optionally filter by date range. |
 
 ---
 
-## 12. Workflow Scheduling
+## 19. Scheduled Transactions
 
-Schedule automated workflows for timed follow-ups, recurring data jobs, and campaign automation.
+Recurring/scheduled transaction templates that auto-generate transactions at specified frequencies.
 
 | Tool | Purpose |
 |------|---------|
-| **list_schedules** | List all scheduled workflows with their statuses. |
-| **schedule_workflow** | Create a new scheduled workflow execution. |
-| **cancel_schedule** | Cancel a pending schedule. |
+| **list_scheduled_transactions** | List all scheduled/recurring transactions. Optionally filter by active status. |
+| **create_scheduled_transaction** | Create a recurring transaction template with frequency settings. |
+| **update_scheduled_transaction** | Update a scheduled transaction. Recalculates next due date if schedule changes. |
+| **toggle_scheduled_transaction** | Activate or deactivate a scheduled transaction. |
+| **process_due_transactions** | Generate transactions from all scheduled transactions that are due. Returns count of processed and generated. |
+| **get_pending_scheduled** | Get scheduled transactions due within a time window. Shows what will be auto-generated soon. |
 
 ---
 
-## Key Principles
+## 20. Accounts & Categories
+
+Financial account and category management.
+
+| Tool | Purpose |
+|------|---------|
+| **list_accounts** | List all finance accounts (bank accounts, cash, credit cards, digital wallets). |
+| **create_account** | Create a new finance account. |
+| **update_account** | Update an account's name, type, institution, or active status. |
+| **list_categories** | List finance categories. Optionally filter by type (income/expense/both). |
+| **create_category** | Create a new finance category for classifying transactions. |
+| **seed_default_categories** | Seed default categories (Nómina, Renta, Servicios, Software, etc.) if none exist. Safe to call multiple times. |
+| **get_finance_settings** | Get finance module settings. |
+
+---
+
+## 21. Integrations
+
+Billing integrations with external services.
+
+| Tool | Purpose |
+|------|---------|
+| **list_integrations** | List all billing integrations (Stripe, AWS, Cloudflare, Clockify, etc.) with sync status. |
+| **get_integration_stats** | Get statistics for a specific integration: total transactions, income, expenses, last transaction date. |
+
+---
+
+## 22. Invoices (Facturación)
+
+Invoice management backed by PostgreSQL. Handles CFDI tax data for Mexican invoicing.
+
+| Tool | Purpose |
+|------|---------|
+| **list_invoices** | List invoices with optional filters by status and date. Most recent first. Invoices are linked to contracts and contain CFDI tax data. |
+| **get_invoice** | Get a single invoice with full details: products, extra charges (late fees, discounts), payment complements, and attached files. |
+| **get_overdue_invoices** | Get all overdue invoices (status=pending, dueDate in the past). Useful for identifying collection issues. |
+| **get_tax_config** | Get tax configuration settings. |
+| **list_payment_complements** | List payment complements (Complementos de Pago) for PPD invoices. CFDI documents that confirm payment receipt. |
+| **get_invoice_summary** | Invoice statistics: counts and totals by status (pending, paid, overdue, cancelled). |
+
+---
+
+## 23. Financial Reports
+
+Cross-backend reporting tools combining Convex transactions with PostgreSQL invoices.
+
+| Tool | Purpose |
+|------|---------|
+| **get_financial_report** | Comprehensive financial report for a period: income vs expenses by category, balance by currency, account balances, and invoice status. |
+| **get_cashflow_projection** | Project cash flow for the next N days based on current balances, scheduled transactions, and pending invoices. Identifies potential shortfalls. |
+| **get_reconciliation_status** | Reconciliation status: unreconciled transactions, transactions needing reconciliation, and suggested matches based on amount and date proximity. |
+| **get_category_breakdown** | Expense/income breakdown by category for a period. Understand where money goes. |
+| **get_monthly_trend** | Monthly income vs expense trend for the last N months. Shows month-over-month changes. |
+
+### Financial health check
+
+1. **get_financial_report** → overall picture for current period
+2. **get_cashflow_projection** → upcoming cash flow risks
+3. **get_overdue_invoices** → collection issues
+4. **get_reconciliation_status** → unmatched transactions
+5. **get_monthly_trend** → trajectory over time
+6. Present: current health, risks, action items
+
+---
+
+# Office Server (`lexguard-office`)
+
+## 24. Virtual Office
+
+Complete virtual office management: correspondence, visitors, calls, reservations, and locations.
+
+| Tool | Purpose |
+|------|---------|
+| **get_office_summary** | Summary of office activity: unread mail, upcoming visitors, recent calls, active reservations. |
+| **list_mail** | List correspondence/mail items with virtual and physical location info. |
+| **get_mail_item** | Get a single mail item by ID with attached files. |
+| **get_unread_mail_count** | Count of unread/pending mail items. |
+| **list_visitors** | List visitor invitations with location info. |
+| **get_visitor** | Get a single visitor invitation by ID. |
+| **create_visitor** | Create a visitor invitation. |
+| **list_call_logs** | List phone call logs. Includes calls from linked portal groups. |
+| **get_call_log** | Get a single call log by ID. |
+| **list_virtual_locations** | List virtual office locations for this group. |
+| **get_virtual_location** | Get a single virtual location by ID with its physical location info. |
+| **list_physical_locations** | List physical locations accessible to this group (via virtual locations). |
+| **list_reservations** | List space/room reservations for this group. |
+| **get_reservation** | Get a single space reservation by ID. |
+| **create_reservation** | Create a space/room reservation. |
+| **list_document_types** | List available document types for mail classification. |
+
+### Office daily briefing
+
+1. **get_office_summary** → quick overview
+2. **list_mail** → check for unread correspondence
+3. **list_visitors** → upcoming visitors today
+4. **list_reservations** → active/upcoming room bookings
+5. Present: priority mail, visitor schedule, room availability
+
+---
+
+# Compliance Server (`lexguard-compliance`)
+
+## 25. Compliance Tracking (Pulso)
+
+Rules-based document compliance tracking with health scores. Monitors business obligations and their fulfillment via uploaded documents.
+
+| Tool | Purpose |
+|------|---------|
+| **get_compliance_summary** | Compliance health summary: all active tracking rules and their status (current, warning, overdue). |
+| **list_tracking_rules** | List all tracking rules (compliance obligations) for the business. |
+| **get_tracking_rule** | Get a single tracking rule by ID. |
+| **create_tracking_rule** | Create a new tracking rule (compliance obligation). |
+| **update_tracking_rule** | Update an existing tracking rule by ID. |
+| **delete_tracking_rule** | Delete a tracking rule by ID. |
+| **get_rule_matching_files** | Get files that match a specific tracking rule's tag criteria. |
+| **get_overdue_obligations** | Get all overdue compliance obligations. |
+
+### Setting up compliance tracking
+
+1. **detect_tag_groups** → discover existing tag patterns in uploaded files
+2. **create_rules_from_detected** → auto-create rules from detected tag groups
+3. Or manually: **create_tracking_rule** with tag criteria, frequency, and deadlines
+4. **get_compliance_summary** → verify health scores
+5. Monitor regularly: **get_overdue_obligations** → identify urgent items
+
+---
+
+## 26. File Search & Tags
+
+Search and inspect files and their tag metadata for compliance analysis.
+
+| Tool | Purpose |
+|------|---------|
+| **search_files** | Search files across the business group. |
+| **get_file_detail** | Get detailed file information. |
+| **list_file_tags** | List file tag field/value summary. |
+| **detect_tag_groups** | Discover distinct tag field/value combinations with file counts. Helps identify what compliance rules could be created. |
+| **create_rules_from_detected** | Auto-create tracking rules from detected tag groups. |
+
+---
+
+## 27. Virtual Collections
+
+Automated file grouping with AI-powered batch processing.
+
+| Tool | Purpose |
+|------|---------|
+| **list_virtual_collections** | List virtual collections for the group. |
+| **get_collection_results** | Get results from a collection run. |
+| **trigger_collection_run** | Trigger a new collection processing run. |
+
+---
+
+# Key Principles
 
 - **All user-facing text must be in Spanish** (Mexican Spanish specifically)
 - **Two-step messaging**: always draft → confirm. Never skip confirmation.
@@ -357,3 +626,6 @@ Schedule automated workflows for timed follow-ups, recurring data jobs, and camp
 - **Sequential post IDs**: use PREFIX-001, PREFIX-002, etc. for human-readable organization.
 - **Verify after creation**: always call the corresponding list/get tool to confirm things were created correctly.
 - **Project info is your brand context**: read it first via **get_project_info** before writing any content — it contains voice, tone, pain points, and differentiators.
+- **Use the right server**: tools are distributed across five MCP servers. If a tool is not found, you may be connected to the wrong server.
+- **Finance is dual-backend**: transactions live in Convex, invoices in PostgreSQL. Reports combine both sources.
+- **Compliance tracks obligations**: tracking rules define what documents are needed, files prove fulfillment. Health scores derive from matching files against rules.
